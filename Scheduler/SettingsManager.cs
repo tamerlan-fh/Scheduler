@@ -37,13 +37,24 @@ namespace Scheduler
             get { return settings.Message; }
             set { settings.Message = value; }
         }
+        public bool RunTogetherWithWindows
+        {
+            get { return settings.RunTogetherWithWindows; }
+            set { settings.RunTogetherWithWindows = value; }
+        }
+
+        public bool StateIsMinimized
+        {
+            get { return settings.StateIsMinimized; }
+            set { settings.StateIsMinimized = value; }
+        }
 
         private const string filename = "SchedulerCofig.dat";
         private void Load()
         {
             if (!File.Exists(filename))
             {
-                settings = new MySettings(false, TimeSpan.FromHours(5), "Закройте это окно и продолжайте свои дела!");
+                settings = new MySettings(false, TimeSpan.FromHours(5), "Закройте это окно и продолжайте свои дела!", false);
             }
             else
             {
@@ -70,14 +81,17 @@ namespace Scheduler
     class MySettings
     {
         public MySettings() { }
-        public MySettings(bool isEnables, TimeSpan interval, string message)
+        public MySettings(bool isEnables, TimeSpan interval, string message, bool runTogetherWithWindows)
         {
             this.Message = message;
             this.Interval = interval;
             this.IsEnabled = isEnables;
+            this.RunTogetherWithWindows = RunTogetherWithWindows;
         }
         public TimeSpan Interval { get; set; }
         public bool IsEnabled { get; set; }
         public string Message { get; set; }
+        public bool RunTogetherWithWindows { get; set; }
+        public bool StateIsMinimized { get; set; }
     }
 }

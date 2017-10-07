@@ -7,7 +7,7 @@
         xmlns:tb="clr-namespace:Scheduler.TaskbarNotification"
         xmlns:c="clr-namespace:Scheduler.ValueConverters"
         mc:Ignorable="d"
-        Title="Настройки планировщика" Icon="Resurses/usatu.ico" WindowStartupLocation="CenterScreen" WindowStyle="None" SizeToContent="WidthAndHeight" ResizeMode="NoResize" >
+        Title="Настройки планировщика" Icon="Resurses/usatu.ico" WindowStartupLocation="CenterScreen" WindowStyle="None" Width="390" Height="420" ResizeMode="NoResize">
     <Window.Resources>
         <c:TimeSpanConveter x:Key="TimeSpanConveter" />
     </Window.Resources>
@@ -44,14 +44,18 @@
                     <CheckBox IsChecked="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" Content="Включить" VerticalAlignment="Center" Margin="3"/>
                     <StackPanel IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}">
                         <GroupBox BorderThickness="1" BorderBrush="Gray">
-                            <Grid Margin="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" Text="Время бездействия" BorderThickness="0" VerticalAlignment="Center" Margin="5" Background="Transparent" HorizontalAlignment="Right"/>
-                                <local:MaskedTextBox Grid.Column="1"  Width="auto" Text="{Binding Interval, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource TimeSpanConveter}}" Margin="5" IsEnabled="{Binding ModeAtTime, UpdateSourceTrigger=PropertyChanged}" Background="Transparent"/>
-                            </Grid>
+                            <StackPanel>
+                                <Grid Margin="10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" Text="Время бездействия" BorderThickness="0" VerticalAlignment="Center" Margin="5" Background="Transparent" HorizontalAlignment="Right"/>
+                                    <local:MaskedTextBox Grid.Column="1"  Width="auto" Text="{Binding Interval, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource TimeSpanConveter}}" Margin="5" IsEnabled="{Binding ModeAtTime, UpdateSourceTrigger=PropertyChanged}" Background="Transparent"/>
+                                </Grid>
+                                <CheckBox IsChecked="{Binding StateIsMinimized, UpdateSourceTrigger=PropertyChanged}" Content="Запускать свернуто" VerticalAlignment="Center" Margin="10,3"/>
+                                <CheckBox IsChecked="{Binding RunTogetherWithWindows, UpdateSourceTrigger=PropertyChanged}" Content="Запускать вместе с Windows" VerticalAlignment="Center" Margin="10,3"/>
+                            </StackPanel>
                         </GroupBox>
                         <GroupBox Header="Текст оповещения" Margin="0,10,0,0" BorderThickness="1" BorderBrush="Gray">
                             <TextBox ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Height="50" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" Margin="10" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Background="Transparent"/>

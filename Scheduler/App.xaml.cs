@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,7 +16,20 @@ namespace Scheduler
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
+            try
+            {
+                Process thisProc = Process.GetCurrentProcess();
+                // Check how many total processes have the same name as the current one
+                Process[] procs = Process.GetProcessesByName(thisProc.ProcessName);
+                if (procs.Length > 1)
+                    Application.Current.Shutdown();
+
+                base.OnStartup(e);
+            }
+            catch (Exception ex)
+            {
+                Application.Current.Shutdown();
+            }
         }
     }
 }

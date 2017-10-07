@@ -60,8 +60,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="KeyboardManager.cs" />
+    <Compile Include="LastInputInfoManager.cs" />
     <Compile Include="MaskedTextBox.cs" />
-    <Compile Include="Settings.cs" />
+    <Compile Include="SettingsManager.cs" />
     <Compile Include="Windows\MessageWindow.xaml.cs">
       <DependentUpon>MessageWindow.xaml</DependentUpon>
     </Compile>

@@ -53,8 +53,8 @@ namespace Scheduler
         {
             if (nCode == 0)
             {
-                if (((lParam.vkCode == 0x09) && (lParam.flags == 0x20)) ||  // Alt+Tab 
-                ((lParam.vkCode == 0x1B) && (lParam.flags == 0x20)) ||      // Alt+Esc 
+                if (((lParam.vkCode == 0x09) && (lParam.flags == 0x20)) ||  // Alt+Tab
+                ((lParam.vkCode == 0x1B) && (lParam.flags == 0x20)) ||      // Alt+Esc
                 ((lParam.vkCode == 0x1B) && (lParam.flags == 0x00)) ||      // Ctrl+Esc
                 ((lParam.vkCode == 0x5B) && (lParam.flags == 0x01)) ||      // Left Windows Key
                 ((lParam.vkCode == 0x5C) && (lParam.flags == 0x01)) ||      // Right Windows Key

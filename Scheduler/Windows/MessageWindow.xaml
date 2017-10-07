@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Scheduler"
         mc:Ignorable="d"
-        Title="ShapeShow" ResizeMode="NoResize" WindowStyle="None" WindowState="Maximized" Topmost="True" AllowsTransparency="True" Background="Transparent" >
+        Title="Длявольское окошко" ResizeMode="NoResize" WindowStyle="None" WindowState="Maximized" Topmost="True" AllowsTransparency="True" Background="Transparent" Icon="/Scheduler;component/Resurses/usatu.ico" >
 
     <Grid>
-        <Rectangle Fill="White" Opacity="0.35"/>
+        <Rectangle Fill="White" Opacity="0.5"/>
         <Border VerticalAlignment="Center" HorizontalAlignment="Center" Padding="10" BorderBrush="Black" BorderThickness="1" CornerRadius="10" Background="White">
             <Grid>
                 <Grid.RowDefinitions>

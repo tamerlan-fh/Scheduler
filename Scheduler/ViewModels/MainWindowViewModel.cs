@@ -1,6 +1,8 @@
-﻿using Scheduler.Properties;
+﻿using Microsoft.Win32;
+using Scheduler.Properties;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,24 +30,19 @@ namespace Scheduler.ViewModels
             amended = false;
         }
 
-
         private DispatcherTimer timer;
         private void TimerTick(object sender, EventArgs e)
         {
-            TimeLeft -= timer.Interval;
-            if (TimeLeft.TotalSeconds > 1) return;
+            //Message = string.Format("{0}", LastInputInfoManager.Instance.GetTimeAfterLastInput());
 
-            // MessageBox.Show(Message, "Планировщик", MessageBoxButton.OK, MessageBoxImage.Information);
-            var window = new MessageWindow(Message);
-            window.ShowDialog();
-
-            //if (ModeInTime)
-            //    TimeLeft = TimeSpanBetween(new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second), Time);
-            //else
-            //    TimeLeft = Interval;
-            TimeLeft = Interval;
+            if (LastInputInfoManager.Instance.GetTimeAfterLastInput() >= Interval)
+            {
+                KeyboardManager.DisableSystemKeys();
+                var window = new MessageWindow(Message);
+                window.ShowDialog();
+                KeyboardManager.EnableSystemKeys();
+            }
         }
-
         public string Message
         {
             get { return message; }
@@ -79,20 +76,31 @@ namespace Scheduler.ViewModels
         }
         private bool isEnabled;
 
+        public bool RunTogetherWithWindows
+        {
+            get { return runTogetherWithWindows; }
+            set
+            {
+                if (runTogetherWithWindows == value) return;
+                runTogetherWithWindows = value; OnPropertyChanged("RunTogetherWithWindows"); amended = true;
+            }
+        }
+        private bool runTogetherWithWindows;
+        public bool StateIsMinimized
+        {
+            get { return stateIsMinimized; }
+            set
+            {
+                if (stateIsMinimized == value) return;
+                stateIsMinimized = value; OnPropertyChanged("StateIsMinimized"); amended = true;
+            }
+        }
+        private bool stateIsMinimized;
         /// <summary>
         /// Внесенный поправки
         /// </summary>
         private bool amended;
 
-        /// <summary>
-        /// Оставшееся время до выполнения задания
-        /// </summary>
-        public TimeSpan TimeLeft
-        {
-            get { return timeLeft; }
-            set { timeLeft = value; OnPropertyChanged("TimeLeft"); }
-        }
-        private TimeSpan timeLeft;
         private void ApplyConfig()
         {
             SaveConfig();
@@ -103,7 +111,15 @@ namespace Scheduler.ViewModels
             SettingsManager.Instance.Interval = Interval;
             SettingsManager.Instance.IsEnabled = IsEnabled;
             SettingsManager.Instance.Message = Message;
+            SettingsManager.Instance.RunTogetherWithWindows = RunTogetherWithWindows;
+            SettingsManager.Instance.StateIsMinimized = StateIsMinimized;
             SettingsManager.Instance.Save();
+
+            if (RunTogetherWithWindows)
+                AddAutorun();
+            else
+                RemoveAutorun();
+
             amended = false;
         }
         private void LoadConfig()
@@ -111,17 +127,16 @@ namespace Scheduler.ViewModels
             Interval = SettingsManager.Instance.Interval;
             IsEnabled = SettingsManager.Instance.IsEnabled;
             Message = SettingsManager.Instance.Message;
+            StateIsMinimized = SettingsManager.Instance.StateIsMinimized;
+            RunTogetherWithWindows = SettingsManager.Instance.RunTogetherWithWindows;
         }
         private void StartScheduler()
         {
             if (!IsEnabled)
             {
                 if (timer.IsEnabled) timer.Stop();
-                TimeLeft = TimeSpan.FromTicks(0);
                 return;
             }
-
-            TimeLeft = Interval;
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Start();
         }
@@ -131,12 +146,25 @@ namespace Scheduler.ViewModels
                 timer.Stop();
             App.Current.Shutdown();
         }
-        //private TimeSpan TimeSpanBetween(TimeSpan start, TimeSpan end)
-        //{
-        //    var ts = end - start;
-        //    if (ts.TotalDays < 0) ts += TimeSpan.FromDays((int)Math.Round(Time.TotalDays, 0) + 1);
-        //    if (ts.TotalDays > 1) ts += TimeSpan.FromDays(-(int)Math.Round(Time.TotalDays, 0));
-        //    return ts;
-        //}
+
+        private void AddAutorun()
+        {
+            string name = "Scheduler";//Application name    
+            string location = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            using (var reg = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run\"))
+            {
+                reg.SetValue(name, location);
+            }
+        }
+
+        private void RemoveAutorun()
+        {
+            string name = "Scheduler";//Application name    
+            string location = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            using (var reg = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run\"))
+            {
+                reg.DeleteValue(name);
+            }
+        }
     }
 }

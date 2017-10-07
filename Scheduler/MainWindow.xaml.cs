@@ -13,25 +13,21 @@ namespace Scheduler
     /// </summary>
     public partial class MainWindow : Window
     {
+        private MainWindowViewModel viewModel;
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = new MainWindowViewModel();
+            viewModel = new MainWindowViewModel();
+            this.DataContext = viewModel;
             notifyIcon.TrayMouseDoubleClick += NotifyIconTrayMouseDoubleClick;
+
+            if (viewModel.StateIsMinimized)
+                this.Hide();
         }
 
         private void NotifyIconTrayMouseDoubleClick(object sender, RoutedEventArgs e)
         {
             this.Show();
-        }
-
-        protected override void OnStateChanged(EventArgs e)
-        {
-            if (WindowState == WindowState.Minimized)
-            {
-                this.Hide();
-            }
-            base.OnStateChanged(e);
         }
 
         protected override void OnClosing(CancelEventArgs e)
