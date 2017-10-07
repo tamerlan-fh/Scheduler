@@ -1,14 +1,7 @@
 ﻿using Microsoft.Win32;
-using Scheduler.Properties;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace Scheduler.ViewModels
 {
@@ -16,32 +9,24 @@ namespace Scheduler.ViewModels
     {
         public ICommand ApplyConfigCommand { get; private set; }
         public ICommand ExitCommand { get; private set; }
-
+        public ICommand HideWindowCommand { get; private set; }
         public MainWindowViewModel()
         {
-            timer = new DispatcherTimer();
-            timer.Tick += TimerTick;
+            Interval = SettingsManager.Instance.Interval;
+            IsEnabled = SettingsManager.Instance.IsEnabled;
+            Message = SettingsManager.Instance.Message;
+            StateIsMinimized = SettingsManager.Instance.StateIsMinimized;
+            RunTogetherWithWindows = SettingsManager.Instance.RunTogetherWithWindows;
 
-            LoadConfig();
             ApplyConfigCommand = new RelayCommand(param => this.ApplyConfig(), param => { return amended; });
             ExitCommand = new RelayCommand(param => this.Exit());
+            HideWindowCommand = new RelayCommand(param => this.HideWindow(param));
 
-            StartScheduler();
             amended = false;
-        }
-
-        private DispatcherTimer timer;
-        private void TimerTick(object sender, EventArgs e)
-        {
-            //Message = string.Format("{0}", LastInputInfoManager.Instance.GetTimeAfterLastInput());
-
-            if (LastInputInfoManager.Instance.GetTimeAfterLastInput() >= Interval)
-            {
-                KeyboardManager.DisableSystemKeys();
-                var window = new MessageWindow(Message);
-                window.ShowDialog();
-                KeyboardManager.EnableSystemKeys();
-            }
+            if (IsEnabled)
+                SchedulerManager.Instance.Start();
+            else
+                SchedulerManager.Instance.Stop();
         }
         public string Message
         {
@@ -97,16 +82,10 @@ namespace Scheduler.ViewModels
         }
         private bool stateIsMinimized;
         /// <summary>
-        /// Внесенный поправки
+        /// Имеются внесенные поправки
         /// </summary>
         private bool amended;
-
         private void ApplyConfig()
-        {
-            SaveConfig();
-            StartScheduler();
-        }
-        private void SaveConfig()
         {
             SettingsManager.Instance.Interval = Interval;
             SettingsManager.Instance.IsEnabled = IsEnabled;
@@ -121,49 +100,42 @@ namespace Scheduler.ViewModels
                 RemoveAutorun();
 
             amended = false;
-        }
-        private void LoadConfig()
-        {
-            Interval = SettingsManager.Instance.Interval;
-            IsEnabled = SettingsManager.Instance.IsEnabled;
-            Message = SettingsManager.Instance.Message;
-            StateIsMinimized = SettingsManager.Instance.StateIsMinimized;
-            RunTogetherWithWindows = SettingsManager.Instance.RunTogetherWithWindows;
-        }
-        private void StartScheduler()
-        {
-            if (!IsEnabled)
-            {
-                if (timer.IsEnabled) timer.Stop();
-                return;
-            }
-            timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Start();
+
+            if (IsEnabled)
+                SchedulerManager.Instance.Start();
+            else
+                SchedulerManager.Instance.Stop();
         }
         private void Exit()
         {
-            if (timer.IsEnabled)
-                timer.Stop();
+            SchedulerManager.Instance.Stop();
             App.Current.Shutdown();
         }
+        private void HideWindow(object window)
+        {
+            if (window == null || !(window is Window))
+                return;
 
+            (window as Window).Close();
+        }
         private void AddAutorun()
         {
             string name = "Scheduler";//Application name    
             string location = System.Reflection.Assembly.GetExecutingAssembly().Location;
             using (var reg = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run\"))
             {
-                reg.SetValue(name, location);
+                if (reg.GetValue(name) == null)
+                    reg.SetValue(name, location);
             }
         }
-
         private void RemoveAutorun()
         {
             string name = "Scheduler";//Application name    
             string location = System.Reflection.Assembly.GetExecutingAssembly().Location;
             using (var reg = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run\"))
             {
-                reg.DeleteValue(name);
+                if (reg.GetValue(name) != null)
+                    reg.DeleteValue(name);
             }
         }
     }

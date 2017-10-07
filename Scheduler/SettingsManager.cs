@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Scheduler
 {
@@ -49,7 +45,13 @@ namespace Scheduler
             set { settings.StateIsMinimized = value; }
         }
 
-        private const string filename = "SchedulerCofig.dat";
+        public string Password
+        {
+            get { return settings.Password; }
+            set { settings.Password = value; }
+        }
+
+        private const string filename = "scheduler.config";
         private void Load()
         {
             if (!File.Exists(filename))
@@ -64,8 +66,9 @@ namespace Scheduler
                     settings = (MySettings)formatter.Deserialize(fs);
                 }
             }
-        }
 
+            settings.Password = "1";
+        }
         public void Save()
         {
             var formatter = new BinaryFormatter();
@@ -93,5 +96,6 @@ namespace Scheduler
         public string Message { get; set; }
         public bool RunTogetherWithWindows { get; set; }
         public bool StateIsMinimized { get; set; }
+        public string Password { get; set; }
     }
 }

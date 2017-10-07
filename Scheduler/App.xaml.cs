@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Scheduler.TaskbarNotification;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -14,6 +15,7 @@ namespace Scheduler
     /// </summary>
     public partial class App : Application
     {
+        private TaskbarIcon notifyIcon;
         protected override void OnStartup(StartupEventArgs e)
         {
             try
@@ -25,11 +27,18 @@ namespace Scheduler
                     Application.Current.Shutdown();
 
                 base.OnStartup(e);
+                notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
             }
             catch (Exception ex)
             {
                 Application.Current.Shutdown();
             }
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            notifyIcon.Dispose(); //the icon would clean up automatically, but this is cleaner
+            base.OnExit(e);
         }
     }
 }

@@ -159,12 +159,12 @@ namespace Scheduler
         /// <param name="e"></param>
         protected override void OnPreviewLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
         {
-            if (StayInFocusUntilValid)
-            {
-                _mprovider.Clear();
-                _mprovider.Add(this.Text);
-                if (!_mprovider.MaskFull) e.Handled = true;
-            }
+            //if (StayInFocusUntilValid)
+            //{
+            //    _mprovider.Clear();
+            //    _mprovider.Add(this.Text);
+            //    if (!_mprovider.MaskFull) e.Handled = true;
+            //}
 
             base.OnPreviewLostKeyboardFocus(e);
         }

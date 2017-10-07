@@ -1,4 +1,4 @@
-﻿<Window x:Class="Scheduler.MainWindow"
+﻿<Window x:Class="Scheduler.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,7 +7,7 @@
         xmlns:tb="clr-namespace:Scheduler.TaskbarNotification"
         xmlns:c="clr-namespace:Scheduler.ValueConverters"
         mc:Ignorable="d"
-        Title="Настройки планировщика" Icon="Resurses/usatu.ico" WindowStartupLocation="CenterScreen" WindowStyle="None" Width="390" Height="420" ResizeMode="NoResize">
+        Title="Настройки планировщика"  WindowStartupLocation="CenterScreen" WindowStyle="None" Width="390" Height="420" ResizeMode="NoResize" Icon="/Scheduler;component/Resurses/usatu.ico">
     <Window.Resources>
         <c:TimeSpanConveter x:Key="TimeSpanConveter" />
     </Window.Resources>
@@ -27,17 +27,15 @@
         </Border.Background>
         <DockPanel>
             <Border DockPanel.Dock="Bottom" BorderThickness="1" BorderBrush="Gray" Margin="10" CornerRadius="5" Background="Orange">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Button Command="{Binding ExitCommand}" Content="Выйти" Padding="3" Margin="20,5,5,5" Width="100"/>
                     <Button Command="{Binding ApplyConfigCommand}" Content="Применить" Padding="3" Margin="5,5,5,5" Width="100"/>
-                    <Button Content="Свернуть" Padding="3" Margin="5,5,20,5" Width="100" Click="ButtonClick"/>
+                    <Button Command="{Binding HideWindowCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Content="Скрыть" Padding="3" Margin="5,5,20,5" Width="100"/>
                 </StackPanel>
             </Border>
             <Border DockPanel.Dock="Top" BorderThickness="1" BorderBrush="Gray" Margin="10" CornerRadius="5" Background="Orange">
                 <TextBox IsReadOnly="True" BorderThickness="0" Text="Настройки планировщика" Background="Transparent" Margin="20,5" Foreground="White"/>
             </Border>
-
-            <tb:TaskbarIcon x:Name="notifyIcon" IconSource="Resurses/usatu.ico" ToolTipText="Трей"/>
 
             <Border BorderThickness="1" BorderBrush="Gray" Margin="10" CornerRadius="5">
                 <StackPanel Margin="20">
