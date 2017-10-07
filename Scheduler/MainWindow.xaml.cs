@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Scheduler.ViewModels;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
 
 namespace Scheduler
 {
@@ -23,6 +16,33 @@ namespace Scheduler
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = new MainWindowViewModel();
+            notifyIcon.TrayMouseDoubleClick += NotifyIconTrayMouseDoubleClick;
+        }
+
+        private void NotifyIconTrayMouseDoubleClick(object sender, RoutedEventArgs e)
+        {
+            this.Show();
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            if (WindowState == WindowState.Minimized)
+            {
+                this.Hide();
+            }
+            base.OnStateChanged(e);
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            notifyIcon.Dispose();
+            base.OnClosing(e);
+        }
+
+        private void ButtonClick(object sender, RoutedEventArgs e)
+        {
+            this.Hide();
         }
     }
 }

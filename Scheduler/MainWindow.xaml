@@ -4,9 +4,61 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Scheduler"
+        xmlns:tb="clr-namespace:Scheduler.TaskbarNotification"
+        xmlns:c="clr-namespace:Scheduler.ValueConverters"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        Title="Настройки планировщика" Icon="Resurses/usatu.ico" WindowStartupLocation="CenterScreen" WindowStyle="None" SizeToContent="WidthAndHeight" ResizeMode="NoResize" >
+    <Window.Resources>
+        <c:TimeSpanConveter x:Key="TimeSpanConveter" />
+    </Window.Resources>
+
+    <Border CornerRadius="10" BorderBrush="White" BorderThickness="3">
+        <Border.Background>
+            <LinearGradientBrush
+                EndPoint="0.673,0.95"
+                StartPoint="0.274,0.137">
+                <GradientStop
+                    Color="#FFFFFFFF"
+                    Offset="0" />
+                <GradientStop
+                    Color="#FFF7D373"
+                    Offset="0.982" />
+            </LinearGradientBrush>
+        </Border.Background>
+        <DockPanel>
+            <Border DockPanel.Dock="Bottom" BorderThickness="1" BorderBrush="Gray" Margin="10" CornerRadius="5" Background="Orange">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Command="{Binding ExitCommand}" Content="Выйти" Padding="3" Margin="20,5,5,5" Width="100"/>
+                    <Button Command="{Binding ApplyConfigCommand}" Content="Применить" Padding="3" Margin="5,5,5,5" Width="100"/>
+                    <Button Content="Свернуть" Padding="3" Margin="5,5,20,5" Width="100" Click="ButtonClick"/>
+                </StackPanel>
+            </Border>
+            <Border DockPanel.Dock="Top" BorderThickness="1" BorderBrush="Gray" Margin="10" CornerRadius="5" Background="Orange">
+                <TextBox IsReadOnly="True" BorderThickness="0" Text="Настройки планировщика" Background="Transparent" Margin="20,5" Foreground="White"/>
+            </Border>
+
+            <tb:TaskbarIcon x:Name="notifyIcon" IconSource="Resurses/usatu.ico" ToolTipText="Трей"/>
+
+            <Border BorderThickness="1" BorderBrush="Gray" Margin="10" CornerRadius="5">
+                <StackPanel Margin="20">
+                    <CheckBox IsChecked="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" Content="Включить" VerticalAlignment="Center" Margin="3"/>
+                    <StackPanel IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}">
+                        <GroupBox BorderThickness="1" BorderBrush="Gray">
+                            <Grid Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Text="Время бездействия" BorderThickness="0" VerticalAlignment="Center" Margin="5" Background="Transparent" HorizontalAlignment="Right"/>
+                                <local:MaskedTextBox Grid.Column="1"  Width="auto" Text="{Binding Interval, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource TimeSpanConveter}}" Margin="5" IsEnabled="{Binding ModeAtTime, UpdateSourceTrigger=PropertyChanged}" Background="Transparent"/>
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="Текст оповещения" Margin="0,10,0,0" BorderThickness="1" BorderBrush="Gray">
+                            <TextBox ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Height="50" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" Margin="10" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Background="Transparent"/>
+                        </GroupBox>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </DockPanel>
+    </Border>
 </Window>
